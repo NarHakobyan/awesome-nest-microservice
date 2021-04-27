@@ -1,12 +1,13 @@
+import type { INestMicroservice } from '@nestjs/common';
 import {
     ClassSerializerInterceptor,
     HttpStatus,
-    INestMicroservice,
     UnprocessableEntityException,
     ValidationPipe,
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import type { MicroserviceOptions } from '@nestjs/microservices';
+import { Transport } from '@nestjs/microservices';
 import {
     initializeTransactionalContext,
     patchTypeORMRepositoryWithBaseRepository,

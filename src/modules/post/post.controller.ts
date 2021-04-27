@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 
 @Controller('math')
-export class MathController {
+export class PostController {
     @Client({ transport: Transport.TCP, options: { port: 4000 } })
     client: ClientProxy;
 

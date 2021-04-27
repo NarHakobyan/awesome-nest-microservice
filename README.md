@@ -1,6 +1,6 @@
-# Awesome NestJS v7 Boilerplate
+# Awesome NestJS Microservice
 
-[![Awesome NestJS](https://img.shields.io/badge/Awesome-NestJS-blue.svg?longCache=true&style=flat-square)](https://github.com/juliandavidmr/awesome-nestjs)
+[comment]: <> ([![Awesome NestJS]&#40;https://img.shields.io/badge/Awesome-NestJS-blue.svg?longCache=true&style=flat-square&#41;]&#40;https://github.com/juliandavidmr/awesome-nestjs&#41;)
 
 > This is an ever-evolving, very opinionated architecture and dev environment for new node projects using [NestJS](https://nestjs.com). Questions, feedback, and for now, even bikeshedding are welcome. 😄
 
@@ -8,10 +8,10 @@
 
 ```bash
 # 1. Clone the repository or click on "Use this template" button.
-git clone https://github.com/NarHakobyan/awesome-nest-boilerplate.git my-new-project
+git clone https://github.com/NarHakobyan/awesome-nest-microservice.git my-new-microservice
 
 # 2. Enter your newly-cloned folder.
-cd my-new-project
+cd my-new-microservice
 
 # 3. Install dependencies. (Make sure yarn is installed: https://yarnpkg.com/lang/en/docs/install)
 yarn
@@ -56,3 +56,9 @@ This project includes a `docs` folder with more details on:
 
 1.  [Setup and development](https://narhakobyan.github.io/awesome-nest-boilerplate/docs/development.html#first-time-setup)
 1.  [Architecture](https://narhakobyan.github.io/awesome-nest-boilerplate/docs/architecture.html)
+
+## Community
+
+For help, discussion about best practices, or any other conversation that would benefit from being searchable:
+
+[Discuss Awesome NestJS Microservice on GitHub](https://github.com/NarHakobyan/awesome-nest-microservice/discussions)

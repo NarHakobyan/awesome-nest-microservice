@@ -1,14 +1,15 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import type { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { contextMiddleware } from './middlewares';
-import { MathModule } from './modules/math/math.module';
+import { PostModule } from './modules/post/post.module';
 import { ConfigService } from './shared/services/config.service';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
     imports: [
-        MathModule,
+        PostModule,
         TypeOrmModule.forRootAsync({
             imports: [SharedModule],
             useFactory: (configService: ConfigService) =>
