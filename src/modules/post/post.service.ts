@@ -22,7 +22,7 @@ export class PostsService {
     async search(text: string): Promise<PostEntity[]> {
         const results = await this.postSearchService.search(text);
         const ids = results.map((result) => result.id);
-        if (!ids.length) {
+        if (ids.length === 0) {
             return [];
         }
         return this.postRepository.find({

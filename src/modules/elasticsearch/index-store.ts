@@ -3,7 +3,7 @@ import type { AnyClass, IndexedClass } from './types';
 export class IndexStore {
     public static add<T>(cls: IndexedClass<T>): void {
         if (typeof cls !== 'function') {
-            throw new Error('Function expected');
+            throw new TypeError('Function expected');
         }
         IndexStore.store.push(cls);
     }
@@ -13,7 +13,7 @@ export class IndexStore {
     }
 
     public static getAll(): AnyClass[] {
-        return IndexStore.store.slice();
+        return [...IndexStore.store];
     }
     private static store: AnyClass[] = [];
 }
