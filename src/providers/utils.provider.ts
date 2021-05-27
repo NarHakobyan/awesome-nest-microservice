@@ -1,41 +1,41 @@
 export class UtilsProvider {
-    /**
-     * convert entity to dto class instance
-     * @param {{new(entity: E, options: any): T}} model
-     * @param {E[] | E} entity
-     * @param options
-     * @returns {T[] | T}
-     */
-    public static toDto<T, E>(
-        model: new (entity: E, options?: unknown) => T,
-        entity: E,
-        options?: Record<string, unknown>,
-    ): T;
-    public static toDto<T, E>(
-        model: new (entity: E, options?: unknown) => T,
-        entity: E[],
-        options?: Record<string, unknown>,
-    ): T[];
-    public static toDto<T, E>(
-        model: new (entity: E, options?: unknown) => T,
-        entity: E | E[],
-        options?: Record<string, unknown>,
-    ): T | T[] {
-        if (Array.isArray(entity)) {
-            return entity.map((u) => new model(u, options));
-        }
-
-        return new model(entity, options);
+  /**
+   * convert entity to dto class instance
+   * @param {{new(entity: E, options: any): T}} model
+   * @param {E[] | E} entity
+   * @param options
+   * @returns {T[] | T}
+   */
+  public static toDto<T, E>(
+    model: new (entity: E, options?: unknown) => T,
+    entity: E,
+    options?: Record<string, unknown>,
+  ): T;
+  public static toDto<T, E>(
+    model: new (entity: E, options?: unknown) => T,
+    entity: E[],
+    options?: Record<string, unknown>,
+  ): T[];
+  public static toDto<T, E>(
+    model: new (entity: E, options?: unknown) => T,
+    entity: E | E[],
+    options?: Record<string, unknown>,
+  ): T | T[] {
+    if (Array.isArray(entity)) {
+      return entity.map((u) => new model(u, options));
     }
 
-    /**
-     * generate random string
-     * @param length
-     */
-    static generateRandomString(length: number): string {
-        return Math.random()
-            .toString(36)
-            .replace(/[^\dA-Za-z]+/g, '')
-            .slice(0, length);
-    }
+    return new model(entity, options);
+  }
+
+  /**
+   * generate random string
+   * @param length
+   */
+  static generateRandomString(length: number): string {
+    return Math.random()
+      .toString(36)
+      .replace(/[^\dA-Za-z]+/g, '')
+      .slice(0, length);
+  }
 }

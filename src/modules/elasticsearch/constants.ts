@@ -2,6 +2,6 @@
 import 'reflect-metadata';
 
 export const DECORATORS = {
-    INDEX: Symbol(),
-    PROPERTIES: Symbol(),
+  INDEX: Symbol(),
+  PROPERTIES: Symbol(),
 };

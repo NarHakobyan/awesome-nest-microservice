@@ -8,8 +8,8 @@ const providers = [ConfigService, AwsS3Service, GeneratorService];
 
 @Global()
 @Module({
-    providers,
-    imports: [HttpModule],
-    exports: [...providers, HttpModule],
+  providers,
+  imports: [HttpModule],
+  exports: [...providers, HttpModule],
 })
 export class SharedModule {}
