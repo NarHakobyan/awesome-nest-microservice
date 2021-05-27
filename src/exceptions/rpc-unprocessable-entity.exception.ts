@@ -1,3 +1,4 @@
+import type { ValidationError } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 
@@ -15,7 +16,7 @@ export class RpcUnprocessableEntityException extends RpcException {
    *
    * @param message string describing the error condition.
    */
-  constructor(message?: string) {
+  constructor(message?: string | ValidationError[]) {
     super({ message, statusCode: HttpStatus.UNPROCESSABLE_ENTITY });
   }
 }

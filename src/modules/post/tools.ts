@@ -1,4 +1,5 @@
-/* eslint-disable no-redeclare */
+import { clone } from 'lodash';
+
 import type {
   IFieldStructure,
   IPropertiesMetadata,
@@ -13,47 +14,48 @@ import type { ICoreOptions, IndexedClass } from '../elasticsearch/types';
 export function getPureMapping(
   metadata: IPropertiesMetadata,
 ): IPropertiesMetadata {
-  return Object.keys(metadata).reduce(
-    (mapping: IPropertiesMetadata, name: string) => {
-      const structure = metadata[name];
-      const copy = { ...structure };
-      if (copy._cls) {
-        delete copy._cls;
-      }
-      if (copy.properties) {
-        copy.properties = getPureMapping(copy.properties);
-      }
-      mapping[name] = copy;
-      return mapping;
-    },
-    {},
-  );
+  const mapping: IPropertiesMetadata = {};
+  for (const name of Object.keys(metadata)) {
+    const structure = clone(metadata[name]);
+    if (structure._cls) {
+      delete structure._cls;
+    }
+    if (structure.properties) {
+      structure.properties = getPureMapping(structure.properties);
+    }
+    mapping[name] = structure;
+  }
+  return mapping;
 }
 
 /**
  * Returns a data depending on the field structure
  * If the field regards a class, it instantiate it recursively
  */
-function getStructuredData(structure: IFieldStructure, source: any): any {
+function getStructuredData<T>(
+  structure: IFieldStructure,
+  source: Partial<T> | Array<Partial<T>>,
+): Partial<T> | Array<Partial<T>> {
   if (!structure._cls || !structure.properties || !source) {
     return source;
   }
 
   // ts note: when _cls is set, fields is set (see field.decorator.ts)
-  const properties: IPropertiesMetadata = structure.properties;
+  const properties = structure.properties;
 
-  if (structure.type === 'nested') {
-    return source.map((item: any) =>
-      getStructuredData({ ...structure, ...{ type: 'object' } }, item),
+  if (Array.isArray(source)) {
+    return source.map(
+      (item) => getStructuredData(structure, item) as Partial<T>,
     );
   }
 
-  return Object.keys(properties).reduce((instance: any, name: string) => {
+  const instance = new structure._cls();
+  for (const name of Object.keys(properties)) {
     if (source[name] !== undefined) {
       instance[name] = getStructuredData(properties[name], source[name]);
     }
-    return instance;
-  }, new structure._cls());
+  }
+  return instance;
 }
 
 /**
@@ -72,10 +74,9 @@ export function instantiateResult<T>(
 export function instantiateResult<T>(
   cls: IndexedClass<T>,
   source: Partial<T> | Array<Partial<T>>,
-): T | T[] {
-  return getStructuredData(
+): Partial<T> | Array<Partial<T>> {
+  return getStructuredData<T>(
     {
-      type: Array.isArray(source) ? 'nested' : 'object',
       _cls: cls,
       properties: getPropertiesMetadata(cls),
     },
@@ -154,7 +155,7 @@ export function buildBulkQuery<T>(
   const metadata = getIndexMetadata(cls, coreOptions);
   const body: any[] = [];
 
-  documents.forEach((document: Partial<T>) => {
+  for (const document of documents) {
     const description: any = {
       _index: metadata.index,
       _type: metadata.type,
@@ -163,7 +164,7 @@ export function buildBulkQuery<T>(
       description._id = (document as any)[metadata.primary];
     }
     body.push({ [action]: description }, document);
-  });
+  }
 
   return { body };
 }

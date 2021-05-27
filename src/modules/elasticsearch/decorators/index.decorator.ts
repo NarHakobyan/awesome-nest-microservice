@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 import {
   cloneDeep,
   isArray,
@@ -21,6 +20,26 @@ export interface IIndexOptions {
     numberOfReplicas: number;
     refreshInterval: number;
   }>;
+}
+function keysToSnakeCase(object: any) {
+  let camelCaseObject = cloneDeep(object);
+
+  if (isArray(camelCaseObject)) {
+    return map(camelCaseObject, (v) => keysToSnakeCase(v));
+  } else {
+    camelCaseObject = mapKeys(camelCaseObject, (value, key) => snakeCase(key));
+
+    // Recursively apply throughout object
+    return mapValues(camelCaseObject, (value) => {
+      if (isPlainObject(value)) {
+        return keysToSnakeCase(value);
+      } else if (isArray(value)) {
+        return map(value, (v) => keysToSnakeCase(v));
+      } else {
+        return value;
+      }
+    });
+  }
 }
 
 /**
@@ -69,25 +88,4 @@ export function Index(
     IndexStore.add(target);
     return target;
   };
-}
-
-function keysToSnakeCase(object: any) {
-  let camelCaseObject = cloneDeep(object);
-
-  if (isArray(camelCaseObject)) {
-    return map(camelCaseObject, (v) => keysToSnakeCase(v));
-  } else {
-    camelCaseObject = mapKeys(camelCaseObject, (value, key) => snakeCase(key));
-
-    // Recursively apply throughout object
-    return mapValues(camelCaseObject, (value) => {
-      if (isPlainObject(value)) {
-        return keysToSnakeCase(value);
-      } else if (isArray(value)) {
-        return map(value, (v) => keysToSnakeCase(v));
-      } else {
-        return value;
-      }
-    });
-  }
 }

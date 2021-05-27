@@ -2,7 +2,6 @@ import type { INestMicroservice } from '@nestjs/common';
 import {
   ClassSerializerInterceptor,
   HttpStatus,
-  UnprocessableEntityException,
   ValidationPipe,
 } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
@@ -15,18 +14,19 @@ import {
 
 import { name } from '../package.json';
 import { AppModule } from './app.module';
+import { RpcUnprocessableEntityException } from './exceptions';
 
 export async function bootstrap(): Promise<INestMicroservice> {
   initializeTransactionalContext();
   patchTypeORMRepositoryWithBaseRepository();
+
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.NATS,
       options: {
-        port: Number(process.env.TRANSPORT_PORT),
-        retryAttempts: 5,
-        retryDelay: 3000,
+        // url: `nats://${process.env.NATS_HOST}:${process.env.NATS_PORT}`,
+        url: 'nats://localhost:4222',
       },
     },
   );
@@ -42,7 +42,7 @@ export async function bootstrap(): Promise<INestMicroservice> {
       errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       transform: true,
       dismissDefaultMessages: true,
-      exceptionFactory: (errors) => new UnprocessableEntityException(errors),
+      exceptionFactory: (errors) => new RpcUnprocessableEntityException(errors),
     }),
   );
 

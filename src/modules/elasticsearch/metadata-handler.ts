@@ -6,7 +6,9 @@ export interface IIndexMetadata {
   index: string;
   type: string;
   primary?: string;
-  settings?: any;
+  settings?: {
+    number_of_shards: number;
+  };
 }
 
 /**
@@ -18,13 +20,13 @@ export function getIndexMetadata<T>(
   cls: IndexedClass<T>,
   coreOptions?: ICoreOptions,
 ): IIndexMetadata {
-  const metadata: IIndexMetadata = Reflect.getMetadata(DECORATORS.INDEX, cls);
+  const metadata = Reflect.getMetadata(DECORATORS.INDEX, cls) as IIndexMetadata;
   if (!metadata) {
     throw new Error('Index is missing');
   }
   return {
     ...metadata,
-    index: `${coreOptions.indexPrefix || process.env.ELASTICSEARCH_PREFIX}_${
+    index: `${coreOptions?.indexPrefix ?? process.env.ELASTICSEARCH_PREFIX}_${
       metadata.index
     }`,
   };
@@ -37,10 +39,10 @@ export function getIndexMetadata<T>(
 export function getPropertiesMetadata<T>(
   cls: IndexedClass<T>,
 ): IPropertiesMetadata {
-  const properties: IPropertiesMetadata = Reflect.getMetadata(
+  const properties = Reflect.getMetadata(
     DECORATORS.PROPERTIES,
     cls,
-  );
+  ) as IPropertiesMetadata;
   if (!properties) {
     throw new Error('Properties are missing');
   }
@@ -58,7 +60,7 @@ export function getId<T>(
   docOrClass: T | IndexedClass<T>,
   doc?: Partial<T>,
 ): string | undefined {
-  const document: any = doc || docOrClass;
+  const document = doc || docOrClass;
   const cls: IndexedClass<T> = doc
     ? (docOrClass as IndexedClass<T>)
     : ((docOrClass as IndexedClass<T>).constructor as IndexedClass<T>);

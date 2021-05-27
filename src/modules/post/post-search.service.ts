@@ -17,9 +17,9 @@ export class PostSearchService {
 
   constructor(private readonly elasticsearchService: ElasticsearchService) {
     // this.createIndex();
-    this.search('Nar').then((data) => {
-      console.log(data);
-    });
+    // this.search('Nar').then((data) => {
+    //   console.log(data);
+    // });
     // this.index({
     //     id: '6b3ebe89-9e62-44c7-8b4e-d8ee42d5458d',
     //     title: 'Narek Hakobyan',
