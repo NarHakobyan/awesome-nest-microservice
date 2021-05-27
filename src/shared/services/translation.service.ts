@@ -6,7 +6,7 @@ import type { translateOptions } from 'nestjs-i18n/dist/services/i18n.service';
 import { AbstractDto } from '../../common/dto/abstract.dto';
 import { TRANSLATION_DECORATOR_KEY } from '../../decorators/translate.decorator';
 import type { ITranslationDecoratorInterface } from '../../interfaces/ITranslationDecoratorInterface';
-import { ContextService } from '../../providers/context.service';
+import { ContextProvider } from '../../providers/context.provider';
 
 @Injectable()
 export class TranslationService {
@@ -31,7 +31,7 @@ export class TranslationService {
                         await this.translate(
                             `${translateDec.translationKey}.${value}`,
                             {
-                                lang: ContextService.getLanguage(),
+                                lang: ContextProvider.getLanguage(),
                             },
                         );
                     }

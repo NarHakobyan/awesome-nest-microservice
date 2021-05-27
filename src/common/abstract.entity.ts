@@ -4,7 +4,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 
-import { UtilsService } from '../providers/utils.service';
+import { UtilsProvider } from '../providers/utils.provider';
 import type { AbstractDto } from './dto/abstract.dto';
 
 export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
@@ -26,6 +26,6 @@ export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
     abstract dtoClass: new (entity: AbstractEntity, options?: any) => T;
 
     toDto(options?: any): T {
-        return UtilsService.toDto(this.dtoClass, this, options);
+        return UtilsProvider.toDto(this.dtoClass, this, options);
     }
 }

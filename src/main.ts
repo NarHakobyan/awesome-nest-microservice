@@ -13,10 +13,8 @@ import {
     patchTypeORMRepositoryWithBaseRepository,
 } from 'typeorm-transactional-cls-hooked';
 
+import { name } from '../package.json';
 import { AppModule } from './app.module';
-// import { QueryFailedFilter } from './filters/query-failed.filter';
-import { ConfigService } from './shared/services/config.service';
-import { SharedModule } from './shared/shared.module';
 
 export async function bootstrap(): Promise<INestMicroservice> {
     initializeTransactionalContext();
@@ -49,12 +47,9 @@ export async function bootstrap(): Promise<INestMicroservice> {
         }),
     );
 
-    const configService = app.select(SharedModule).get(ConfigService);
-
-    const port = configService.getNumber('PORT');
     await app.listenAsync();
 
-    console.info(`server running on port ${port}`);
+    console.info(`Microservice ${name} is up and running`);
 
     return app;
 }

@@ -1,4 +1,4 @@
-export class UtilsService {
+export class UtilsProvider {
     /**
      * convert entity to dto class instance
      * @param {{new(entity: E, options: any): T}} model
@@ -7,19 +7,19 @@ export class UtilsService {
      * @returns {T[] | T}
      */
     public static toDto<T, E>(
-        model: new (entity: E, options?: any) => T,
+        model: new (entity: E, options?: unknown) => T,
         entity: E,
-        options?: Record<string, any>,
+        options?: Record<string, unknown>,
     ): T;
     public static toDto<T, E>(
-        model: new (entity: E, options?: any) => T,
+        model: new (entity: E, options?: unknown) => T,
         entity: E[],
-        options?: Record<string, any>,
+        options?: Record<string, unknown>,
     ): T[];
     public static toDto<T, E>(
-        model: new (entity: E, options?: any) => T,
+        model: new (entity: E, options?: unknown) => T,
         entity: E | E[],
-        options?: Record<string, any>,
+        options?: Record<string, unknown>,
     ): T | T[] {
         if (Array.isArray(entity)) {
             return entity.map((u) => new model(u, options));
@@ -36,6 +36,6 @@ export class UtilsService {
         return Math.random()
             .toString(36)
             .replace(/[^\dA-Za-z]+/g, '')
-            .substr(0, length);
+            .slice(0, length);
     }
 }
