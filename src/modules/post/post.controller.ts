@@ -2,26 +2,22 @@ import { Controller } from '@nestjs/common';
 import {
   Ctx,
   MessagePattern,
+  NatsContext,
   Payload,
-  TcpContext,
 } from '@nestjs/microservices';
-import { IsNotEmpty, IsString } from 'class-validator';
 
-class PostSearchDto {
-  @IsString()
-  @IsNotEmpty()
-  text: string;
-}
+import { PostSearchDto } from './dto/PostSearchDto';
+import { PostsService } from './post.service';
 
 @Controller('posts')
 export class PostController {
+  constructor(public postsService: PostsService) {}
+
   @MessagePattern('search')
-  sum(
+  postsSearch(
     @Payload() postSearchDto: PostSearchDto,
-    @Ctx() context: TcpContext,
-  ): string {
-    console.log(context);
-    console.log(postSearchDto);
-    return '';
+    @Ctx() _context: NatsContext,
+  ) {
+    return this.postsService.search(postSearchDto.text);
   }
 }
