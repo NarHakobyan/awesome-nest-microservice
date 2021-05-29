@@ -27,6 +27,7 @@ export async function bootstrap(): Promise<INestMicroservice> {
       options: {
         // url: `nats://${process.env.NATS_HOST}:${process.env.NATS_PORT}`,
         url: 'nats://localhost:4222',
+        queue: 'posts_queue',
       },
     },
   );
