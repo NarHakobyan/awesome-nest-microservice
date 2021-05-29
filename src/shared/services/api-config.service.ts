@@ -1,20 +1,13 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import type { ElasticsearchModuleOptions } from '@nestjs/elasticsearch';
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import dotenv from 'dotenv';
 
 import { SnakeNamingStrategy } from '../../snake-naming.strategy';
 
-export class ConfigService {
-  constructor() {
-    const nodeEnv = this.nodeEnv;
-    dotenv.config({
-      path: `.${nodeEnv}.env`,
-    });
-
-    // Replace \\n with \n to support multiline strings in AWS
-    for (const envName of Object.keys(process.env)) {
-      process.env[envName] = process.env[envName].replace(/\\n/g, '\n');
-    }
-  }
+@Injectable()
+export class ApiConfigService {
+  constructor(private configService: ConfigService) {}
 
   get isDevelopment(): boolean {
     return this.nodeEnv === 'development';
@@ -24,16 +17,12 @@ export class ConfigService {
     return this.nodeEnv === 'production';
   }
 
-  public get(key: string): string {
-    return process.env[key];
-  }
-
   public getNumber(key: string): number {
-    return Number(this.get(key));
+    return Number(this.configService.get(key));
   }
 
   get nodeEnv(): string {
-    return this.get('NODE_ENV') || 'development';
+    return this.configService.get<string>('NODE_ENV', 'development');
   }
 
   get typeOrmConfig(): TypeOrmModuleOptions {
@@ -67,11 +56,11 @@ export class ConfigService {
       migrations,
       keepConnectionAlive: true,
       type: 'postgres',
-      host: this.get('DB_HOST'),
+      host: this.configService.get<string>('DB_HOST'),
       port: this.getNumber('DB_PORT'),
-      username: this.get('DB_USERNAME'),
-      password: this.get('DB_PASSWORD'),
-      database: this.get('DB_DATABASE'),
+      username: this.configService.get<string>('DB_USERNAME'),
+      password: this.configService.get<string>('DB_PASSWORD'),
+      database: this.configService.get<string>('DB_DATABASE'),
       subscribers: [],
       migrationsRun: true,
       logging: this.nodeEnv === 'development',
@@ -81,11 +70,22 @@ export class ConfigService {
 
   get awsS3Config() {
     return {
-      accessKeyId: this.get('AWS_S3_ACCESS_KEY_ID'),
-      secretAccessKey: this.get('AWS_S3_SECRET_ACCESS_KEY'),
-      bucketRegion: this.get('AWS_S3_BUCKET_REGION'),
-      bucketApiVersion: this.get('AWS_S3_API_VERSION'),
-      bucketName: this.get('AWS_S3_BUCKET_NAME'),
+      accessKeyId: this.configService.get<string>('AWS_S3_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get<string>(
+        'AWS_S3_SECRET_ACCESS_KEY',
+      ),
+      bucketRegion: this.configService.get<string>('AWS_S3_BUCKET_REGION'),
+      bucketApiVersion: this.configService.get<string>('AWS_S3_API_VERSION'),
+      bucketName: this.configService.get<string>('AWS_S3_BUCKET_NAME'),
+    };
+  }
+  get elasticConfig(): ElasticsearchModuleOptions {
+    return {
+      node: this.configService.get<string>('ELASTICSEARCH_NODE'),
+      auth: {
+        username: this.configService.get<string>('ELASTICSEARCH_USERNAME'),
+        password: this.configService.get<string>('ELASTICSEARCH_PASSWORD'),
+      },
     };
   }
 }

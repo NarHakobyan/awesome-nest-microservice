@@ -1,11 +1,11 @@
 import { Global, HttpModule, Module } from '@nestjs/common';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
+import { ApiConfigService } from './services/api-config.service';
 import { AwsS3Service } from './services/aws-s3.service';
-import { ConfigService } from './services/config.service';
 import { GeneratorService } from './services/generator.service';
 
-const providers = [ConfigService, AwsS3Service, GeneratorService];
+const providers = [ApiConfigService, AwsS3Service, GeneratorService];
 
 @Global()
 @Module({
@@ -13,14 +13,9 @@ const providers = [ConfigService, AwsS3Service, GeneratorService];
   imports: [
     HttpModule,
     ElasticsearchModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        node: configService.get('ELASTICSEARCH_NODE'),
-        auth: {
-          username: configService.get('ELASTICSEARCH_USERNAME'),
-          password: configService.get('ELASTICSEARCH_PASSWORD'),
-        },
-      }),
-      inject: [ConfigService],
+      useFactory: (configService: ApiConfigService) =>
+        configService.elasticConfig,
+      inject: [ApiConfigService],
     }),
   ],
   exports: [...providers, HttpModule, ElasticsearchModule],
