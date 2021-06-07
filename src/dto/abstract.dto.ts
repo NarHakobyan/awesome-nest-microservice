@@ -1,8 +1,15 @@
-import type { AbstractEntity } from '../entities';
+import { ApiProperty } from '@nestjs/swagger';
+
+import type { AbstractEntity } from '../entities/abstract.entity';
 
 export class AbstractDto {
+  @ApiProperty()
   id: string;
+
+  @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty()
   updatedAt: Date;
 
   constructor(entity: AbstractEntity) {

@@ -1,3 +1,5 @@
+import './boilerplate.polyfill';
+
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,7 +16,8 @@ import { SharedModule } from './shared/shared.module';
     HealthCheckerModule,
     TypeOrmModule.forRootAsync({
       imports: [SharedModule],
-      useFactory: (configService: ApiConfigService) => configService.typeOrmConfig,
+      useFactory: (configService: ApiConfigService) =>
+        configService.typeOrmConfig,
       inject: [ApiConfigService],
     }),
   ],

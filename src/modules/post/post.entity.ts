@@ -1,6 +1,6 @@
 import { Column, Entity } from 'typeorm';
 
-import { AbstractEntity } from '../../entities';
+import { AbstractEntity } from '../../entities/abstract.entity';
 import { PostDto } from './PostDto';
 
 @Entity({ name: 'posts' })

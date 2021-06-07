@@ -7,7 +7,7 @@ import {
 import type { AbstractDto } from '../dto';
 import { UtilsProvider } from '../providers/utils.provider';
 
-export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
+export abstract class AbstractEntity<DTO extends AbstractDto = AbstractDto> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -23,9 +23,12 @@ export abstract class AbstractEntity<T extends AbstractDto = AbstractDto> {
   })
   updatedAt: Date;
 
-  abstract dtoClass: new (entity: AbstractEntity, options?: any) => T;
+  abstract dtoClass: new (
+    entity: AbstractEntity,
+    options?: GetConstructorArgs<DTO>[1],
+  ) => DTO;
 
-  toDto(options?: any): T {
+  toDto<D = DTO>(options?: GetConstructorArgs<D>[1]): DTO {
     return UtilsProvider.toDto(this.dtoClass, this, options);
   }
 }
