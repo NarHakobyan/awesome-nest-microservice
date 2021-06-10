@@ -21,16 +21,24 @@ export class ApiConfigService {
     return Number(this.configService.get(key));
   }
 
+  private getString(key: string, defaultValue?: string): string {
+    console.log(key);
+    return this.configService
+      .get(key, defaultValue)
+      .toString()
+      .replace(/\\n/g, '\n');
+  }
+
   get nodeEnv(): string {
-    return this.configService.get<string>('NODE_ENV', 'development');
+    return this.getString('NODE_ENV', 'development');
   }
 
   get typeOrmConfig(): TypeOrmModuleOptions {
     let entities = [__dirname + '/../../modules/**/*.entity{.ts,.js}'];
     let migrations = [__dirname + '/../../migrations/*{.ts,.js}'];
 
-    if ((<any>module).hot) {
-      const entityContext = (<any>require).context(
+    if (module.hot) {
+      const entityContext = require.context(
         './../../modules',
         true,
         /\.entity\.ts$/,
@@ -38,9 +46,9 @@ export class ApiConfigService {
       entities = entityContext.keys().map((id) => {
         const entityModule = entityContext(id);
         const [entity] = Object.values(entityModule);
-        return entity;
+        return entity as string;
       });
-      const migrationContext = (<any>require).context(
+      const migrationContext = require.context(
         './../../migrations',
         false,
         /\.ts$/,
@@ -48,7 +56,7 @@ export class ApiConfigService {
       migrations = migrationContext.keys().map((id) => {
         const migrationModule = migrationContext(id);
         const [migration] = Object.values(migrationModule);
-        return migration;
+        return migration as string;
       });
     }
     return {
@@ -56,11 +64,11 @@ export class ApiConfigService {
       migrations,
       keepConnectionAlive: true,
       type: 'postgres',
-      host: this.configService.get<string>('DB_HOST'),
+      host: this.getString('DB_HOST'),
       port: this.getNumber('DB_PORT'),
-      username: this.configService.get<string>('DB_USERNAME'),
-      password: this.configService.get<string>('DB_PASSWORD'),
-      database: this.configService.get<string>('DB_DATABASE'),
+      username: this.getString('DB_USERNAME'),
+      password: this.getString('DB_PASSWORD'),
+      database: this.getString('DB_DATABASE'),
       subscribers: [],
       migrationsRun: true,
       logging: this.nodeEnv === 'development',
@@ -70,21 +78,17 @@ export class ApiConfigService {
 
   get awsS3Config() {
     return {
-      accessKeyId: this.configService.get<string>('AWS_S3_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get<string>(
-        'AWS_S3_SECRET_ACCESS_KEY',
-      ),
-      bucketRegion: this.configService.get<string>('AWS_S3_BUCKET_REGION'),
-      bucketApiVersion: this.configService.get<string>('AWS_S3_API_VERSION'),
-      bucketName: this.configService.get<string>('AWS_S3_BUCKET_NAME'),
+      bucketRegion: this.getString('AWS_S3_BUCKET_REGION'),
+      bucketApiVersion: this.getString('AWS_S3_API_VERSION'),
+      bucketName: this.getString('AWS_S3_BUCKET_NAME'),
     };
   }
   get elasticConfig(): ElasticsearchModuleOptions {
     return {
-      node: this.configService.get<string>('ELASTICSEARCH_NODE'),
+      node: this.getString('ELASTICSEARCH_NODE'),
       auth: {
-        username: this.configService.get<string>('ELASTICSEARCH_USERNAME'),
-        password: this.configService.get<string>('ELASTICSEARCH_PASSWORD'),
+        username: this.getString('ELASTICSEARCH_USERNAME'),
+        password: this.getString('ELASTICSEARCH_PASSWORD'),
       },
     };
   }
